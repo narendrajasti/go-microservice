@@ -1,28 +1,50 @@
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
+	"context"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"time"
+
+	"github.com/narendrajasti/go-microservice/handlers"
 )
 
 func main() {
-	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
-		b, err := ioutil.ReadAll(r.Body)
+
+	l := log.New(os.Stdout, "go-microservice", log.LstdFlags)
+
+	greet := handlers.NewGreet(l)
+	healthCheck := handlers.NewHealthCheck(l)
+
+	sm := http.NewServeMux()
+	sm.Handle("/", greet)
+	sm.Handle("/healthCheck", healthCheck)
+
+	s := &http.Server{
+		Addr:         ":9090",
+		Handler:      sm,
+		IdleTimeout:  120 * time.Second,
+		ReadTimeout:  1 * time.Second,
+		WriteTimeout: 1 * time.Second,
+	}
+
+	go func() {
+		err := s.ListenAndServe()
 
 		if err != nil {
-			http.Error(rw, "Bad request data", http.StatusBadRequest)
-			return
+			l.Fatal(err)
 		}
+	}()
 
-		fmt.Fprintf(rw, "Hello %s.\n", b)
-	})
+	sigChan := make(chan os.Signal)
+	signal.Notify(sigChan, os.Interrupt)
+	signal.Notify(sigChan, os.Kill)
 
-	http.HandleFunc("/healthCheck", func(rw http.ResponseWriter, _ *http.Request) {
-		log.Println("UP!!!")
-		fmt.Fprintf(rw, "UP! \n")
-	})
+	sig := <-sigChan
+	l.Println("Recieved terminate, graceful shutdown", sig)
 
-	http.ListenAndServe(":9090", nil)
+	tc, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	s.Shutdown(tc)
 }
