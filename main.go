@@ -17,11 +17,12 @@ func main() {
 
 	greet := handlers.NewGreet(l)
 	healthCheck := handlers.NewHealthCheck(l)
+	products := handlers.NewProduct(l)
 
 	sm := http.NewServeMux()
 	sm.Handle("/", greet)
 	sm.Handle("/healthCheck", healthCheck)
-
+	sm.Handle("/products", products)
 	s := &http.Server{
 		Addr:         ":9090",
 		Handler:      sm,
