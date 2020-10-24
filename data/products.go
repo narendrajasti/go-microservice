@@ -2,6 +2,7 @@ package data
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"time"
 )
@@ -58,4 +59,50 @@ var productList = []*Product{
 		CreatedOn:   time.Now().UTC().String(),
 		UpdatedOn:   time.Now().UTC().String(),
 	},
+}
+
+// FromJSON returns a product struct from JSON request body
+func (p *Product) FromJSON(r io.Reader) error {
+	decoder := json.NewDecoder(r)
+	err := decoder.Decode(p)
+	return err
+}
+
+// AddProduct add a product to the productList
+func AddProduct(p *Product) {
+	p.ID = getNextID()
+	productList = append(productList, p)
+}
+
+// getNextID() returns next incremental ID
+func getNextID() int {
+	lp := productList[len(productList)-1]
+	return lp.ID + 1
+}
+
+// ErrProductNotFound is returned if product doesn't exists
+var ErrProductNotFound = fmt.Errorf("Product not found")
+
+// UpdateProduct updates the product info
+func UpdateProduct(id int, p *Product) error {
+	pos, err := findProduct(id)
+	if err != nil {
+		return err
+	}
+
+	p.ID = id
+	productList[pos] = p
+
+	return nil
+}
+
+// findProduct returns the product with position if exists
+func findProduct(id int) (int, error) {
+	for i, p := range productList {
+		if p.ID == id {
+			return i, nil
+		}
+	}
+
+	return -1, ErrProductNotFound
 }

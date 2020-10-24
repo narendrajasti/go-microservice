@@ -21,8 +21,9 @@ func main() {
 
 	sm := http.NewServeMux()
 	sm.Handle("/", greet)
-	sm.Handle("/healthCheck", healthCheck)
 	sm.Handle("/products", products)
+	sm.Handle("/healthCheck", healthCheck)
+
 	s := &http.Server{
 		Addr:         ":9090",
 		Handler:      sm,
