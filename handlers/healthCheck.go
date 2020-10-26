@@ -16,7 +16,8 @@ func NewHealthCheck(l *log.Logger) *HealthCheck {
 	return &HealthCheck{l}
 }
 
-func (hc *HealthCheck) ServeHTTP(rw http.ResponseWriter, _ *http.Request) {
+// HealthCheck returns UP
+func (hc *HealthCheck) HealthCheck(rw http.ResponseWriter, _ *http.Request) {
 	hc.l.Println("UP!!!")
 	fmt.Fprintf(rw, "UP! \n")
 }
