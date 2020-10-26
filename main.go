@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/narendrajasti/go-microservice/handlers"
 )
 
@@ -15,14 +16,25 @@ func main() {
 
 	l := log.New(os.Stdout, "go-microservice", log.LstdFlags)
 
-	greet := handlers.NewGreet(l)
-	healthCheck := handlers.NewHealthCheck(l)
+	// greet := handlers.NewGreet(l)
+	// healthCheck := handlers.NewHealthCheck(l)
 	products := handlers.NewProduct(l)
+	healthCheck := handlers.NewHealthCheck(l)
 
-	sm := http.NewServeMux()
-	sm.Handle("/", greet)
-	sm.Handle("/products", products)
-	sm.Handle("/healthCheck", healthCheck)
+	sm := mux.NewRouter()
+	getRouter := sm.Methods("GET").Subrouter()
+	getRouter.HandleFunc("/products", products.GetProducts)
+
+	postRouter := sm.Methods("POST").Subrouter()
+	postRouter.HandleFunc("/products", products.AddProduct)
+	postRouter.Use(products.MiddlewareValidationProduct)
+
+	putRouter := sm.Methods("PUT").Subrouter()
+	putRouter.HandleFunc("/products/{id:[0-9]+}", products.UpdateProducts)
+	putRouter.Use(products.MiddlewareValidationProduct)
+
+	healthRouter := sm.Methods("GET").Subrouter()
+	healthRouter.HandleFunc("/healthCheck", healthCheck.HealthCheck)
 
 	s := &http.Server{
 		Addr:         ":9090",
