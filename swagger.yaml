@@ -1,0 +1,14 @@
+basePath: /products
+consumes:
+- application/json
+info:
+  description: |-
+    Documentation for Product API
+
+    Scheme: http
+  title: classification of Product API
+  version: 1.0.0
+paths: {}
+produces:
+- applciation/json
+swagger: "2.0"

@@ -1,3 +1,17 @@
+// Package handlers classification of Product API
+//
+// Documentation for Product API
+//
+// Scheme: http
+// BasePath: /products
+// Version: 1.0.0
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// - application/json
+// swagger:meta
 package handlers
 
 import (
@@ -5,11 +19,28 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
-	"github.com/gorilla/mux"
 	"github.com/narendrajasti/go-microservice/data"
 )
+
+// A list of products returns in the response
+// swagger:response productsResponse
+type productsResponse struct {
+	// All products in the system
+	// in: body
+	Body []data.Product
+}
+
+// // swagger:response noContent
+// type productsNoContent struct {
+// }
+
+// // swagger:parameters updateProducts
+// type productIDParameterWrappergo struct {
+// 	// in: path
+// 	// required: true
+// 	ID int `json:"id"`
+// }
 
 // Products handler
 type Products struct {
@@ -19,52 +50,6 @@ type Products struct {
 // NewProduct retuns list of products
 func NewProduct(l *log.Logger) *Products {
 	return &Products{l}
-}
-
-// GetProducts returns the product list
-func (p Products) GetProducts(rw http.ResponseWriter, r *http.Request) {
-	lp := data.GetProducts()
-	err := lp.ToJSON(rw)
-	if err != nil {
-		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
-	}
-}
-
-// AddProduct adds a product to list
-func (p Products) AddProduct(rw http.ResponseWriter, r *http.Request) {
-
-	p.l.Println("Handle POST request")
-
-	product := r.Context().Value(KeyProduct{}).(data.Product)
-
-	p.l.Printf("product: %#v", product)
-	data.AddProduct(&product)
-}
-
-// UpdateProducts updates the product if exists in the db
-func (p Products) UpdateProducts(rw http.ResponseWriter, r *http.Request) {
-
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		http.Error(rw, "Unable to covert id", http.StatusBadRequest)
-		return
-	}
-
-	p.l.Println("Handle PUT Product, recieved id: {}", id)
-
-	prod := r.Context().Value(KeyProduct{}).(data.Product)
-
-	err = data.UpdateProduct(id, &prod)
-	if err == data.ErrProductNotFound {
-		http.Error(rw, "Product not found", http.StatusNotFound)
-		return
-	}
-
-	if err != nil {
-		http.Error(rw, "Product not found", http.StatusInternalServerError)
-		return
-	}
 }
 
 // KeyProduct used
