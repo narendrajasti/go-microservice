@@ -18,13 +18,14 @@ require (
 	github.com/magiconair/properties v1.8.4 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
-	github.com/nicholasjackson/building-microservices-youtube/product-api v0.0.0-20200918064506-0260dd0e3676
+	github.com/nicholasjackson/building-microservices-youtube/product-api v0.0.0-20200918064506-0260dd0e3676 // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/spf13/afero v1.4.1 // indirect
 	github.com/spf13/viper v1.7.1 // indirect
+	github.com/stretchr/testify v1.6.1
 	golang.org/x/net v0.0.0-20201031054903-ff519b6c9102 // indirect
 	golang.org/x/sys v0.0.0-20201101102859-da207088b7d1 // indirect
 	golang.org/x/text v0.3.4 // indirect
-	golang.org/x/tools v0.0.0-20201031021630-582c62ec74d0 // indirect
+	golang.org/x/tools v0.0.0-20201102012620-51cde5226ead // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
 )
