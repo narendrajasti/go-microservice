@@ -10,16 +10,18 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
+	"github.com/narendrajasti/go-microservice/data"
 	"github.com/narendrajasti/go-microservice/handlers"
 )
 
 func main() {
 
 	l := log.New(os.Stdout, "go-microservice", log.LstdFlags)
+	v := data.NewValidation()
 
 	// greet := handlers.NewGreet(l)
 	// healthCheck := handlers.NewHealthCheck(l)
-	products := handlers.NewProduct(l)
+	products := handlers.NewProducts(l, v)
 	healthCheck := handlers.NewHealthCheck(l)
 
 	sm := mux.NewRouter()
@@ -29,11 +31,11 @@ func main() {
 
 	postRouter := sm.Methods("POST").Subrouter()
 	postRouter.HandleFunc("/products", products.AddProduct)
-	postRouter.Use(products.MiddlewareValidationProduct)
+	postRouter.Use(products.MiddlewareValidateProduct)
 
 	putRouter := sm.Methods("PUT").Subrouter()
 	putRouter.HandleFunc("/products/{id:[0-9]+}", products.UpdateProducts)
-	putRouter.Use(products.MiddlewareValidationProduct)
+	putRouter.Use(products.MiddlewareValidateProduct)
 
 	healthRouter := sm.Methods("GET").Subrouter()
 	healthRouter.HandleFunc("/healthCheck", healthCheck.HealthCheck)
