@@ -8,6 +8,11 @@ import (
 	"github.com/narendrajasti/go-microservice/data"
 )
 
+// swagger:route PUT /products/{id} products updateProduct
+// Returns a HTTP 201 with no content
+// responses:
+// 	201: noContent
+
 // UpdateProducts updates the product if exists in the db
 func (p Products) UpdateProducts(rw http.ResponseWriter, r *http.Request) {
 

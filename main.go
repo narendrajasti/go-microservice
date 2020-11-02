@@ -24,7 +24,8 @@ func main() {
 
 	sm := mux.NewRouter()
 	getRouter := sm.Methods("GET").Subrouter()
-	getRouter.HandleFunc("/products", products.GetProducts)
+	getRouter.HandleFunc("/products", products.ListAll)
+	getRouter.HandleFunc("/products/{id:[0-9]+}", products.ListSingle)
 
 	postRouter := sm.Methods("POST").Subrouter()
 	postRouter.HandleFunc("/products", products.AddProduct)

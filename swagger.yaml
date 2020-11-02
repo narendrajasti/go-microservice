@@ -1,4 +1,4 @@
-basePath: /
+basePath: /products
 consumes:
 - application/json
 definitions:
@@ -31,7 +31,7 @@ info:
 paths:
   /products:
     get:
-      description: Return a list of products from the database
+      description: Return a list of products
       operationId: listProducts
       responses:
         "200":
